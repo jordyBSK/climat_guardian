@@ -16,4 +16,9 @@ BEGIN;
     select * from api.data_view where name = 'ESP1';
     select * from api.avg_date('day') where name = 'ESP1';
 
+    -- test insert_data
+    delete from api.data where esp_id = (SELECT id FROM api.esp WHERE name = 'ESP1');
+    select api.insert_data(25.5, 50.5, '192.168.1.10', 1609459200);
+    select * from api.data where esp_id = (SELECT id FROM api.esp WHERE name = 'ESP1');
+
 ROLLBACK;

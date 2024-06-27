@@ -14,6 +14,25 @@ BEGIN;
     drop table api.esp;
 
     -- use the old functions bback
+    drop function api.insert_data;
+    create function api.insert_data(
+        temperature real,
+        humidity real,
+        ip varchar(15),
+        unix_timestamp bigint
+    ) 
+    returns void as $$
+    begin
+        -- if the ip said in the token is not the same as the one in the request, then this means that the user is not who he pretends to be and we should throw an error
+        if (current_setting('request.jwt.claims', true)::json->>'ip' != ip) then
+            raise exception insufficient_privilege
+            using hint = 'You are not who you pretend to be';
+        end if;
+        -- insert the data
+        insert into api.data("temperature", "humidity", "ip", "timestamp") values (temperature, humidity, ip, to_timestamp(unix_timestamp));
+    end $$ language plpgsql;
+    grant insert on api.data to esp32;
+
     drop function api.avg_date;
     create function api.avg_date(
         delta varchar
