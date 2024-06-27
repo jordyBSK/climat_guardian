@@ -8,4 +8,8 @@ BEGIN;
     UPDATE api.esp SET (x,y) = (4,5) WHERE name = 'ESP1';
     SELECT ip FROM api.esp WHERE name = 'ESP1';
 
+    -- test data table
+    select * from api.data;
+    INSERT INTO api.data (temperature, humidity, timestamp, esp_id) VALUES (25.5, 50.5, '2021-01-01 00:00:00', (SELECT id FROM api.esp WHERE name = 'ESP1'));
+
 ROLLBACK;
