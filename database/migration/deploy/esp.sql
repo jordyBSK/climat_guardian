@@ -19,4 +19,10 @@ BEGIN;
     alter table api.data drop column ip;
     alter table api.data add constraint data_esp_fk foreign key (esp_id) references api.esp(id);
 
+    -- Create a view to get the data with the esp name and ip
+    create view api.data_view as
+        select temperature, humidity, timestamp, ip, name
+        from api.data
+        join api.esp as e on e.id = data.esp_id;
+
 COMMIT;

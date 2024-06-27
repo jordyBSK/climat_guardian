@@ -2,6 +2,9 @@
 
 BEGIN;
 
+    -- drop the view
+    drop view api.data_view;
+
     -- set the data table back to the old state
     alter table api.data add column ip varchar(15);
     update api.data data set ip = esp.ip from api.esp esp where data.esp_id = esp.id;
