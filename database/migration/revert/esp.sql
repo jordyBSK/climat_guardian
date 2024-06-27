@@ -13,4 +13,29 @@ BEGIN;
     -- drop the esp table
     drop table api.esp;
 
+    -- use the old functions bback
+    drop function api.avg_date;
+    create function api.avg_date(
+        delta varchar
+    )
+    returns table(
+        avg_temperature double precision, 
+        avg_humidity double precision, 
+        date timestamp,
+        ip character varying(15),
+        count bigint
+    ) as $$
+    begin
+        return query select 
+            avg(temperature) as avg_temperature, 
+            avg(humidity) as avg_humidity,
+            date_trunc(delta, timestamp) as date,
+            data.ip,
+            count(*) as count
+        from api.data
+        group by date, data.ip
+        order by date;
+    end;
+    $$ language plpgsql;
+
 COMMIT;

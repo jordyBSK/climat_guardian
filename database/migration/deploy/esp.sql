@@ -25,4 +25,32 @@ BEGIN;
         from api.data
         join api.esp as e on e.id = data.esp_id;
 
+    -- Replace the function to get the averaged data to match the new data structure
+    drop function api.avg_date;
+    create function api.avg_date(
+        delta varchar
+    )
+    returns table(
+        avg_temperature double precision, 
+        avg_humidity double precision, 
+        date timestamp,
+        ip character varying(15),
+        name character varying(20),
+        count bigint
+    ) as $$
+    begin
+        return query select 
+            avg(temperature) as avg_temperature, 
+            avg(humidity) as avg_humidity,
+            date_trunc(delta, timestamp) as date,
+            esp.ip,
+            esp.name,
+            count(*) as count
+        from api.data
+        join api.esp on data.esp_id = esp.id
+        group by date, esp.id
+        order by date;
+    end;
+    $$ language plpgsql;
+
 COMMIT;
