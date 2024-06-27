@@ -2,11 +2,10 @@
 
 BEGIN;
 
-    create table api.esp
-    (
+    create table api.esp (
         id   serial primary key,
         name character varying(20) not null,
-        ip   character varying(15) NOT NULL,
+        ip   character varying(15) NOT NULL unique,
         x    integer,
         y    integer
     );

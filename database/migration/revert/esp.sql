@@ -2,6 +2,7 @@
 
 BEGIN;
 
+    -- drop the esp table
     drop table api.esp;
 
 COMMIT;
